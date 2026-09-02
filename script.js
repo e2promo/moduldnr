@@ -550,8 +550,22 @@ applyContentAndMedia();
 renderCatalog();
 renderGallery();
 fillModelSelect();
-loadFromApi();
 window.dispatchEvent(new Event('content-applied'));
+
+// Догрузка из Supabase — после полной отрисовки страницы, чтобы не тормозить первый экран
+if (document.readyState === 'complete') {
+  scheduleApiLoad();
+} else {
+  window.addEventListener('load', scheduleApiLoad, { once: true });
+}
+
+function scheduleApiLoad(){
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(loadFromApi, { timeout: 2000 });
+  } else {
+    setTimeout(loadFromApi, 300);
+  }
+}
 
 /* ---------- Cookie-баннер ---------- */
 (function(){

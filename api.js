@@ -5,6 +5,7 @@
 
 const API = (() => {
   const BASE = '/api/cms';
+  const TIMEOUT = 8000;
   let _token = '';
 
   function setToken(t) { _token = t; }
@@ -16,18 +17,31 @@ const API = (() => {
   }
 
   async function get(type) {
-    const res = await fetch(`${BASE}?type=${type}`, { headers: headers() });
-    if (!res.ok) throw new Error('API GET error: ' + res.status);
-    return res.json();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT);
+    try {
+      const res = await fetch(`${BASE}?type=${type}`, { headers: headers(), signal: ctrl.signal });
+      if (!res.ok) throw new Error('API GET error: ' + res.status);
+      return res.json();
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   async function post(action, type, data) {
-    const res = await fetch(BASE, {
-      method: 'POST', headers: headers(),
-      body: JSON.stringify({ action, type, data })
-    });
-    if (!res.ok) throw new Error('API POST error: ' + res.status);
-    return res.json();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT * 2);
+    try {
+      const res = await fetch(BASE, {
+        method: 'POST', headers: headers(),
+        body: JSON.stringify({ action, type, data }),
+        signal: ctrl.signal
+      });
+      if (!res.ok) throw new Error('API POST error: ' + res.status);
+      return res.json();
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   return {
