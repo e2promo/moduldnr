@@ -500,6 +500,8 @@ const DEFAULT_CONTENT = {
   'how.step4.text': 'Подтверждаем детали заказа.',
   'how.step5.title': 'Изготовление и получение',
   'how.step5.text': 'Производим и передаём изделие.',
+  'faq.title': 'Частые вопросы',
+  'faq.lead': 'Отвечаем на то, что спрашивают чаще всего.',
   'lead.title': 'Получить расчёт',
   'lead.text': 'Оставьте заявку — вернёмся с расчётом. Или напишите нам напрямую.',
   'footer.desc': 'Производство модульных павильонов, кофеен, модульных зданий и вагонов-бытовок.'
@@ -519,6 +521,7 @@ const CONTENT_GROUPS = [
   {label:'Почему выбирают нас', keys:['why.title','why.lead','why.card1.title','why.card1.text','why.card2.title','why.card2.text','why.card3.title','why.card3.text','why.card4.title','why.card4.text']},
   {label:'Галерея', keys:['gallery.title','gallery.lead']},
   {label:'Как заказать', keys:['how.title','how.lead','how.step1.title','how.step1.text','how.step2.title','how.step2.text','how.step3.title','how.step3.text','how.step4.title','how.step4.text','how.step5.title','how.step5.text']},
+  {label:'Частые вопросы', keys:['faq.title','faq.lead']},
   {label:'Форма заявки', keys:['lead.title','lead.text']},
   {label:'Футер', keys:['footer.desc']}
 ];
@@ -565,6 +568,7 @@ function labelName(k){
     'how.step4.title':'Шаг 4 — заголовок', 'how.step4.text':'Шаг 4 — текст',
     'how.step5.title':'Шаг 5 — заголовок', 'how.step5.text':'Шаг 5 — текст',
     'lead.title':'Заголовок', 'lead.text':'Текст',
+    'faq.title':'Заголовок', 'faq.lead':'Описание',
     'footer.desc':'Описание'
   };
   return map[k] || k;

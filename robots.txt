@@ -1,12 +1,26 @@
 # robots.txt — Модуль ДНР
-# https://modul-dnr.ru/
+# https://moduldnr.vercel.app/
 
 User-agent: *
 Allow: /
+Allow: /assets/
 
-# Запрет индексации служебных страниц
+# Служебные страницы
 Disallow: /admin.html
-Disallow: /assets/img/gallery/
+Disallow: /api/
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
 
 # Sitemap
-Sitemap: https://modul-dnr.ru/sitemap.xml
+Sitemap: https://moduldnr.vercel.app/sitemap.xml
