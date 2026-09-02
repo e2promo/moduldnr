@@ -115,7 +115,11 @@ async function handlePost(req, res) {
     }
     case 'addRequest': {
       const { name, phone, model, comment } = data || {};
-      const { data: ins } = await supabase.from('requests').insert({ name, phone, model, comment, status: 'new' }).select();
+      const { data: ins, error } = await supabase
+        .from('requests')
+        .insert({ name: name || '', phone: phone || '', model: model || '', comment: comment || '', status: 'new' })
+        .select();
+      if (error) return res.status(500).json({ error: error.message });
       return res.json({ ok: true, id: ins?.[0]?.id });
     }
     case 'updateRequest': {

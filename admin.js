@@ -23,6 +23,40 @@ function showDashboard(){
 /* Синхронизация: API → localStorage (кэш) */
 async function syncFromApi(){
   if(!window.API) return;
+
+  // Заявки и контакты — главное, что должно приходить с сервера
+  try {
+    const reqs = await API.getRequests();
+    if(Array.isArray(reqs)){
+      const normalized = reqs.map(r => ({
+        id: String(r.id),
+        date: r.created_at || r.date || '',
+        name: r.name || '',
+        phone: r.phone || '',
+        model: r.model || '',
+        comment: r.comment || '',
+        status: r.status || 'new'
+      }));
+      localStorage.setItem(REQUESTS_KEY, JSON.stringify(normalized));
+    }
+  } catch(e){ console.warn('sync requests skipped:', e); }
+
+  try {
+    const cts = await API.getContacts();
+    if(Array.isArray(cts)){
+      const normalized = cts.map(c => ({
+        id: String(c.id),
+        date: c.created_at || c.date || '',
+        name: c.name || '',
+        phone: c.phone || '',
+        telegram: c.telegram || '',
+        vk: c.vk || '',
+        source: c.source || ''
+      }));
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(normalized));
+    }
+  } catch(e){ console.warn('sync contacts skipped:', e); }
+
   try {
     const [content, media] = await Promise.all([API.getContent(), API.getMedia()]);
     if(content && Object.keys(content).length) localStorage.setItem('modul_dnr_content', JSON.stringify(content));
@@ -35,8 +69,19 @@ async function syncFromApi(){
   } catch(e){ console.warn('sync products skipped:', e); }
   try {
     const gallery = await API.getGallery();
-    if(gallery && gallery.length) localStorage.setItem('modul_dnr_custom_gallery', JSON.stringify(gallery));
+    if(gallery && gallery.length){
+      const mapped = gallery.map(g => ({ id: g.id, dataUrl: g.data_url, fileName: g.file_name }));
+      localStorage.setItem('modul_dnr_custom_gallery', JSON.stringify(mapped));
+    }
   } catch(e){ console.warn('sync gallery skipped:', e); }
+}
+
+/* Ручное обновление данных */
+async function refreshData(btn){
+  if(btn){ btn.disabled = true; btn.textContent = '⏳ Загрузка...'; }
+  await syncFromApi();
+  renderAll();
+  if(btn){ btn.disabled = false; btn.textContent = '🔄 Обновить'; }
 }
 
 document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -56,6 +101,10 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 document.getElementById('logout-btn').addEventListener('click', () => {
   sessionStorage.removeItem(AUTH_KEY);
   showLogin();
+});
+
+document.getElementById('refresh-btn')?.addEventListener('click', (e) => {
+  refreshData(e.currentTarget);
 });
 
 /* ---------- Данные ---------- */
@@ -153,7 +202,7 @@ function renderRequests(){
 
   body.innerHTML = items.map(r => `
     <tr class="${r.status === 'new' ? 'is-new' : ''}">
-      <td class="td-date">${r.id.slice(-6).toUpperCase()}</td>
+      <td class="td-date">${String(r.id).slice(-6).toUpperCase()}</td>
       <td class="td-date">${fmtDate(r.date)}</td>
       <td class="td-name">${esc(r.name || 'Без имени')}</td>
       <td class="td-phone"><a href="tel:${r.phone}">${fmtPhone(r.phone)}</a></td>
@@ -191,7 +240,7 @@ function renderContacts(){
 
   body.innerHTML = items.map(c => `
     <tr>
-      <td class="td-date">${c.id.slice(-6).toUpperCase()}</td>
+      <td class="td-date">${String(c.id).slice(-6).toUpperCase()}</td>
       <td class="td-date">${fmtDate(c.date)}</td>
       <td class="td-name">${esc(c.name || 'Без имени')}</td>
       <td class="td-phone"><a href="tel:${c.phone}">${fmtPhone(c.phone)}</a></td>
@@ -229,10 +278,10 @@ function renderAll(){
 /* ---------- Просмотр заявки ---------- */
 window.viewRequest = function(id){
   const reqs = getRequests();
-  const r = reqs.find(x => x.id === id);
+  const r = reqs.find(x => String(x.id) === String(id));
   if(!r) return;
 
-  document.getElementById('modal-title').textContent = 'Заявка #' + r.id.slice(-6).toUpperCase();
+  document.getElementById('modal-title').textContent = 'Заявка #' + String(r.id).slice(-6).toUpperCase();
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-detail">
       <div class="modal-detail__label">Дата</div>
@@ -270,12 +319,13 @@ window.viewRequest = function(id){
   document.getElementById('modal').style.display = 'flex';
   document.getElementById('modal-save').onclick = () => {
     const newStatus = document.getElementById('modal-status').value;
-    const idx = reqs.findIndex(x => x.id === id);
+    const idx = reqs.findIndex(x => String(x.id) === String(id));
     if(idx >= 0){
       reqs[idx].status = newStatus;
       saveRequests(reqs);
       renderAll();
     }
+    if(window.API) API.updateRequest(id, newStatus).catch(e => console.warn('API updateRequest:', e));
     closeModal();
   };
 };
@@ -283,16 +333,18 @@ window.viewRequest = function(id){
 /* ---------- Удаление ---------- */
 window.deleteRequest = function(id){
   if(!confirm('Удалить заявку?')) return;
-  const reqs = getRequests().filter(r => r.id !== id);
+  const reqs = getRequests().filter(r => String(r.id) !== String(id));
   saveRequests(reqs);
   renderAll();
+  if(window.API) API.deleteRequest(id).catch(e => console.warn('API deleteRequest:', e));
 };
 
 window.deleteContact = function(id){
   if(!confirm('Удалить контакт?')) return;
-  const contacts = getContacts().filter(c => c.id !== id);
+  const contacts = getContacts().filter(c => String(c.id) !== String(id));
   saveContacts(contacts);
   renderAll();
+  if(window.API) API.deleteContact(id).catch(e => console.warn('API deleteContact:', e));
 };
 
 /* ---------- Модалка ---------- */
@@ -308,7 +360,7 @@ document.getElementById('export-btn').addEventListener('click', () => {
 
   const headers = ['ID','Дата','Имя','Телефон','Модель','Комментарий','Статус'];
   const rows = reqs.map(r => [
-    r.id.slice(-6).toUpperCase(),
+    String(r.id).slice(-6).toUpperCase(),
     fmtDate(r.date),
     r.name || '',
     r.phone || '',
