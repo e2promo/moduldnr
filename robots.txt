@@ -1,0 +1,12 @@
+# robots.txt — Модуль ДНР
+# https://modul-dnr.ru/
+
+User-agent: *
+Allow: /
+
+# Запрет индексации служебных страниц
+Disallow: /admin.html
+Disallow: /assets/img/gallery/
+
+# Sitemap
+Sitemap: https://modul-dnr.ru/sitemap.xml
