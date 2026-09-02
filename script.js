@@ -133,19 +133,26 @@ function renderGallery(){
 }
 
 /* ---------- Заполнение select моделей ---------- */
-function fillModelSelect(){
+function fillModelSelect(rebuild){
   const sel = document.getElementById('f-model');
   if (!sel) return;
-  PRODUCTS.forEach(p => {
+  if (rebuild) {
+    sel.innerHTML = '<option value="">— выберите модель —</option>';
+  }
+  getAllProducts().forEach(p => {
+    const val = `${p.title} (${p.dims} м)`;
+    if (Array.from(sel.options).some(o => o.value === val)) return;
     const opt = document.createElement('option');
-    opt.value = `${p.title} (${p.dims} м)`;
-    opt.textContent = `${p.title} — ${p.dims} м — ${fmtPrice(p.price)}`;
+    opt.value = val;
+    opt.textContent = p.price ? `${p.title} — ${p.dims} м — ${fmtPrice(p.price)}` : `${p.title} — ${p.dims} м`;
     sel.appendChild(opt);
   });
-  const other = document.createElement('option');
-  other.value = 'Индивидуальный вариант';
-  other.textContent = 'Индивидуальный вариант';
-  sel.appendChild(other);
+  if (!Array.from(sel.options).some(o => o.value === 'Индивидуальный вариант')) {
+    const other = document.createElement('option');
+    other.value = 'Индивидуальный вариант';
+    other.textContent = 'Индивидуальный вариант';
+    sel.appendChild(other);
+  }
 }
 
 /* ---------- Кнопки "Рассчитать" → форма ---------- */
@@ -338,8 +345,11 @@ form?.addEventListener('submit', async (e) => {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('bad status ' + res.status);
+    } else if (window.API) {
+      // Отправляем заявку в Supabase через серверный API
+      await window.API.addRequest(payload);
     } else {
-      // Сохраняем в localStorage для админ-панели
+      // Фолбэк: сохраняем в localStorage для админ-панели
       const REQUESTS_KEY = 'modul_dnr_requests';
       const reqs = JSON.parse(localStorage.getItem(REQUESTS_KEY) || '[]');
       reqs.unshift({
@@ -454,12 +464,93 @@ function applyContentAndMedia(){
   }
 }
 
+/* ---------- Догрузка контента и медиа из Supabase (через /api/cms) ---------- */
+function loadFromApi(){
+  if(!window.API) return;
+
+  window.API.getContent().then(content => {
+    if(!content || !Object.keys(content).length) return;
+    localStorage.setItem('modul_dnr_content', JSON.stringify(content));
+    Object.keys(content).forEach(key => {
+      const el = document.querySelector(`[data-edit="${key}"]`);
+      if(!el) return;
+      const val = content[key];
+      if(key === 'hero.title'){
+        const woodEl = el.querySelector('.text-wood');
+        const rest = (val || '').trim();
+        if(woodEl){
+          const parts = rest.split('—');
+          el.innerHTML = '';
+          if(parts.length > 1){
+            el.appendChild(document.createTextNode(parts[0].trim() + ' — '));
+            const span = document.createElement('span');
+            span.className = 'text-wood';
+            span.textContent = parts.slice(1).join('—').trim();
+            el.appendChild(span);
+          } else {
+            el.appendChild(document.createTextNode(rest));
+          }
+        } else {
+          el.textContent = rest;
+        }
+      } else {
+        el.textContent = val;
+      }
+    });
+  }).catch(() => {});
+
+  window.API.getMedia().then(media => {
+    if(!media || !Object.keys(media).length) return;
+    localStorage.setItem('modul_dnr_media', JSON.stringify(media));
+    if(media.hero && media.hero.dataUrl){
+      const heroImg = document.querySelector('.hero__bg img');
+      if(heroImg){
+        heroImg.src = media.hero.dataUrl;
+        heroImg.removeAttribute('srcset');
+        heroImg.removeAttribute('sizes');
+      }
+    }
+    if(media.logo && media.logo.dataUrl){
+      document.querySelectorAll('.logo__mark').forEach(m => {
+        m.textContent = '';
+        const img = document.createElement('img');
+        img.src = media.logo.dataUrl;
+        img.alt = 'Логотип Модуль ДНР';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:inherit;';
+        m.appendChild(img);
+      });
+    }
+    window.__mediaCatalog = media.catalog || {};
+    window.__mediaGallery = (media.gallery && media.gallery.length) ? media.gallery : [];
+    renderCatalog();
+    renderGallery();
+  }).catch(() => {});
+
+  window.API.getProducts().then(list => {
+    const custom = (list || []).filter(p => p.id && p.id.startsWith('custom_'));
+    if(!custom.length) return;
+    localStorage.setItem('modul_dnr_custom_products', JSON.stringify(custom));
+    window.__customProducts = custom;
+    renderCatalog();
+    fillModelSelect(true);
+  }).catch(() => {});
+
+  window.API.getGallery().then(list => {
+    if(!list || !list.length) return;
+    const mapped = list.map(g => ({ id: g.id, dataUrl: g.data_url, fileName: g.file_name }));
+    localStorage.setItem('modul_dnr_custom_gallery', JSON.stringify(mapped));
+    window.__customGallery = mapped;
+    renderGallery();
+  }).catch(() => {});
+}
+
 /* ---------- Инициализация ---------- */
 document.getElementById('year').textContent = new Date().getFullYear();
 applyContentAndMedia();
 renderCatalog();
 renderGallery();
 fillModelSelect();
+loadFromApi();
 window.dispatchEvent(new Event('content-applied'));
 
 /* ---------- Cookie-баннер ---------- */

@@ -17,17 +17,39 @@ function showLogin(){
 function showDashboard(){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'grid';
-  renderAll();
+  syncFromApi().finally(() => renderAll());
+}
+
+/* Синхронизация: API → localStorage (кэш) */
+async function syncFromApi(){
+  if(!window.API) return;
+  try {
+    const [content, media] = await Promise.all([API.getContent(), API.getMedia()]);
+    if(content && Object.keys(content).length) localStorage.setItem('modul_dnr_content', JSON.stringify(content));
+    if(media && Object.keys(media).length) localStorage.setItem('modul_dnr_media', JSON.stringify(media));
+  } catch(e){ console.warn('sync content/media skipped:', e); }
+  try {
+    const products = await API.getProducts();
+    const custom = (products || []).filter(p => p.id && p.id.startsWith('custom_'));
+    if(custom.length) localStorage.setItem('modul_dnr_custom_products', JSON.stringify(custom));
+  } catch(e){ console.warn('sync products skipped:', e); }
+  try {
+    const gallery = await API.getGallery();
+    if(gallery && gallery.length) localStorage.setItem('modul_dnr_custom_gallery', JSON.stringify(gallery));
+  } catch(e){ console.warn('sync gallery skipped:', e); }
 }
 
 document.getElementById('login-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const user = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value;
+  const token = document.getElementById('login-token')?.value.trim() || '';
   const err = document.getElementById('login-error');
   const ok = USERS.some(u => u.login === user && u.pass === pass);
   if(ok){
     sessionStorage.setItem(AUTH_KEY, '1');
+    if(token) sessionStorage.setItem('modul_dnr_token', token);
+    if(window.API && token) API.setToken(token);
     showDashboard();
   } else {
     err.textContent = 'Неверный логин или пароль';
@@ -44,6 +66,34 @@ function getRequests(){ return JSON.parse(localStorage.getItem(REQUESTS_KEY) || 
 function saveRequests(arr){ localStorage.setItem(REQUESTS_KEY, JSON.stringify(arr)); }
 function getContacts(){ return JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]'); }
 function saveContacts(arr){ localStorage.setItem(CONTACTS_KEY, JSON.stringify(arr)); }
+function getContent(){ return JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'); }
+function saveContent(obj){
+  localStorage.setItem(CONTENT_KEY, JSON.stringify(obj));
+  if(window.API) API.saveContent(obj).catch(e => console.warn('API saveContent:', e));
+}
+function getMedia(){ return JSON.parse(localStorage.getItem(MEDIA_KEY) || '{}'); }
+function saveMedia(obj){
+  localStorage.setItem(MEDIA_KEY, JSON.stringify(obj));
+  if(!window.API) return;
+  // Раскладываем вложенную структуру в плоские ключи для БД
+  const flat = {};
+  if(obj.hero) flat['hero'] = obj.hero;
+  if(obj.logo) flat['logo'] = obj.logo;
+  Object.entries(obj.catalog || {}).forEach(([id, v]) => { flat['catalog_' + id] = v; });
+  (obj.gallery || []).forEach((v, i) => { if(v) flat['gallery_' + i] = v; });
+  Object.entries(flat).forEach(([key, val]) => {
+    if(val && val.dataUrl) API.saveMedia(key, val.dataUrl, val.fileName || '').catch(() => {});
+  });
+}
+function getCustomProducts(){ return JSON.parse(localStorage.getItem(CUSTOM_PRODUCTS_KEY) || '[]'); }
+function saveCustomProducts(arr){
+  localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(arr));
+  if(window.API) arr.forEach(p => API.addProduct(p).catch(() => {}));
+}
+function getCustomGallery(){ return JSON.parse(localStorage.getItem(CUSTOM_GALLERY_KEY) || '[]'); }
+function saveCustomGallery(arr){
+  localStorage.setItem(CUSTOM_GALLERY_KEY, JSON.stringify(arr));
+}
 
 /* ---------- Форматирование ---------- */
 function fmtDate(iso){
@@ -345,11 +395,6 @@ const MEDIA_KEY = 'modul_dnr_media';
 const CUSTOM_PRODUCTS_KEY = 'modul_dnr_custom_products';
 const CUSTOM_GALLERY_KEY = 'modul_dnr_custom_gallery';
 
-function getCustomProducts(){ return JSON.parse(localStorage.getItem(CUSTOM_PRODUCTS_KEY) || '[]'); }
-function saveCustomProducts(arr){ localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(arr)); }
-function getCustomGallery(){ return JSON.parse(localStorage.getItem(CUSTOM_GALLERY_KEY) || '[]'); }
-function saveCustomGallery(arr){ localStorage.setItem(CUSTOM_GALLERY_KEY, JSON.stringify(arr)); }
-
 const CATALOG_PRODUCTS = [
   {id:'coffee', title:'Кофейня', dims:'1,8×1,6×2,7', area:'2,9', price:'220 000 ₽'},
   {id:'tp', title:'Торговый павильон (Т.П.)', dims:'4×2,5×2,7', area:'10', price:'350 000 ₽'},
@@ -410,11 +455,6 @@ const DEFAULT_CONTENT = {
   'lead.text': 'Оставьте заявку — вернёмся с расчётом. Или напишите нам напрямую.',
   'footer.desc': 'Производство модульных павильонов, кофеен, модульных зданий и вагонов-бытовок.'
 };
-
-function getContent(){ return JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'); }
-function saveContent(obj){ localStorage.setItem(CONTENT_KEY, JSON.stringify(obj)); }
-function getMedia(){ return JSON.parse(localStorage.getItem(MEDIA_KEY) || '{}'); }
-function saveMedia(obj){ localStorage.setItem(MEDIA_KEY, JSON.stringify(obj)); }
 
 function getContentValue(key){
   const c = getContent();
@@ -581,8 +621,9 @@ document.addEventListener('click', (e) => {
       if(!confirm('Удалить этот товар из каталога?')) return;
       const idx = parseInt(key.replace('cprod_',''), 10);
       const arr = getCustomProducts();
-      arr.splice(idx, 1);
+      const removed = arr.splice(idx, 1)[0];
       saveCustomProducts(arr);
+      if(window.API && removed && removed.id) API.deleteProduct(removed.id).catch(() => {});
       rerenderMediaEditor();
       return;
     }
@@ -590,14 +631,16 @@ document.addEventListener('click', (e) => {
       if(!confirm('Удалить это фото из галереи?')) return;
       const idx = parseInt(key.replace('cgall_',''), 10);
       const arr = getCustomGallery();
-      arr.splice(idx, 1);
+      const removed = arr.splice(idx, 1)[0];
       saveCustomGallery(arr);
+      if(window.API && removed && removed.id) API.deleteGalleryItem(removed.id).catch(() => {});
       rerenderMediaEditor();
       return;
     }
     const media = getMedia();
     removeMediaKey(media, key);
     saveMedia(media);
+    if(window.API) API.deleteMedia(key).catch(() => {});
     updateMediaCard(key);
     showMediaStatus('🗑 Фото удалено');
   }
@@ -624,6 +667,12 @@ document.addEventListener('click', (e) => {
         const arr = getCustomGallery();
         arr.push({ dataUrl, fileName: file.name });
         saveCustomGallery(arr);
+        if(window.API){
+          API.addGalleryItem(dataUrl, file.name)
+            .then(() => syncFromApi())
+            .then(() => rerenderMediaEditor())
+            .catch(() => {});
+        }
         rerenderMediaEditor();
         showMediaStatus('✅ Фото добавлено в галерею');
       });
@@ -662,6 +711,11 @@ document.addEventListener('change', (e) => {
         arr[idx].dataUrl = dataUrl;
         arr[idx].fileName = file.name;
         saveCustomGallery(arr);
+        if(window.API && arr[idx].id){
+          API.deleteGalleryItem(arr[idx].id)
+            .then(() => API.addGalleryItem(dataUrl, file.name))
+            .catch(() => {});
+        }
         updateMediaCard(key);
         showMediaStatus('✅ Фото загружено: ' + file.name);
       }

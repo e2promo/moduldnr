@@ -28,6 +28,10 @@
           <label for="login-pass">Пароль</label>
           <input type="password" id="login-pass" placeholder="••••••" autocomplete="current-password" />
         </div>
+        <div class="field">
+          <label for="login-token">Ключ доступа к API</label>
+          <input type="password" id="login-token" placeholder="из Vercel ADMIN_TOKEN" autocomplete="off" />
+        </div>
         <p class="login-error" id="login-error"></p>
         <button type="submit" class="btn btn--primary btn--block">Войти</button>
       </form>
@@ -211,6 +215,7 @@
     </div>
   </div>
 
+  <script src="api.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
