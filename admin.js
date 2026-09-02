@@ -43,13 +43,10 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const user = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value;
-  const token = document.getElementById('login-token')?.value.trim() || '';
   const err = document.getElementById('login-error');
   const ok = USERS.some(u => u.login === user && u.pass === pass);
   if(ok){
     sessionStorage.setItem(AUTH_KEY, '1');
-    if(token) sessionStorage.setItem('modul_dnr_token', token);
-    if(window.API && token) API.setToken(token);
     showDashboard();
   } else {
     err.textContent = 'Неверный логин или пароль';

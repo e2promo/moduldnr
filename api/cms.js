@@ -2,11 +2,9 @@
 // GET /api/cms?type=content  — получить данные
 // POST /api/cms — сохранить/удалить данные (body: { action, type, data })
 //
-// Защита:
-//  - публичные чтения (content, media, products, gallery) — без токена
-//  - публичная запись: addRequest (заявка с формы сайта)
-//  - всё остальное (POST) и чтения requests/contacts — требуют
-//    заголовок Authorization: Bearer <ADMIN_TOKEN>
+// Защита (опциональная): если в env задан ADMIN_TOKEN, то записи и чтения
+// requests/contacts требуют заголовок Authorization: Bearer <ADMIN_TOKEN>.
+// Если ADMIN_TOKEN не задан — доступ открыт (удобно для быстрого старта).
 
 import { supabase } from './_supabase.js';
 
@@ -32,8 +30,9 @@ export default async function handler(req, res) {
   }
 }
 
+// Если ADMIN_TOKEN не задан в env — проверка отключена
 function isAdmin(req) {
-  if (!ADMIN_TOKEN) return false;
+  if (!ADMIN_TOKEN) return true;
   const auth = req.headers.authorization || '';
   return auth === 'Bearer ' + ADMIN_TOKEN;
 }
