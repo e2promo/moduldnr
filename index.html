@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -39,10 +39,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="image" href="assets/img/hero-1280.webp" imagesrcset="assets/img/hero-768.webp 768w, assets/img/hero-1280.webp 1280w, assets/img/hero.webp 1920w" imagesizes="100vw" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.min.css" media="print" onload="this.media='all'" />
+  <style>:root{--bg:#0f1216;--bg-2:#151a20;--surface:#fff;--ink:#10151b;--ink-2:#46525e;--line:#e2e7ec;--brand:#ff7a1a;--brand-dark:#e56607;--tg:#2aa2e0;--vk:#0077ff;--radius:16px;--shadow:0 8px 30px rgba(16,21,27,.1);--container:1180px;--ff:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--ff-head:'Oswald','Manrope',sans-serif}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden}body{font-family:var(--ff);color:var(--ink);background:var(--surface);line-height:1.55;font-size:17px;overflow-x:hidden;width:100%}img{max-width:100%;display:block}a{color:inherit;text-decoration:none}h1,h2,h3,h4{font-family:var(--ff-head);font-weight:700;line-height:1.1;letter-spacing:.4px;text-transform:uppercase}.container{width:100%;max-width:var(--container);margin:0 auto;padding:0 20px}.header{position:sticky;top:0;z-index:100;background:rgba(15,18,22,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}.header__inner{display:flex;align-items:center;gap:20px;height:66px}.logo{display:flex;align-items:center;gap:10px;font-family:var(--ff-head)}.logo__mark{width:38px;height:38px;display:grid;place-items:center;background:var(--brand);color:#fff;border-radius:10px;font-size:22px;font-weight:700}.logo__text{color:#fff;font-size:20px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}.logo__accent{color:var(--brand);margin-left:4px}.nav{display:flex;gap:22px;margin-left:auto}.nav__link{color:#cfd6dd;font-size:15px;font-weight:600;transition:color .15s}.nav__link:hover{color:#fff}.header__actions{display:flex;align-items:center;gap:14px;margin-left:22px}.header__phone{color:#fff;font-weight:700;font-size:15px}.header__phone:hover{color:var(--brand)}.burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}.burger span{width:26px;height:3px;background:#fff;border-radius:2px;transition:.25s}.hero{position:relative;min-height:100vh;display:flex;align-items:center;color:#fff;padding:100px 0 80px;overflow:hidden}.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,18,22,.05) 0%,rgba(15,18,22,.15) 35%,rgba(15,18,22,.55) 60%,rgba(15,18,22,.82) 80%,rgba(15,18,22,.92) 100%);z-index:1}.hero__bg{position:absolute;inset:0;z-index:0}.hero__bg img{width:100%;height:100%;object-fit:cover}.hero__inner{position:relative;z-index:2;display:flex;justify-content:flex-end;align-items:center;padding:0 20px}.hero__content{max-width:620px;text-align:right}.badge{display:inline-block;background:rgba(255,122,26,.16);color:#ffb27a;border:1px solid rgba(255,122,26,.35);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.4px;margin-bottom:20px;margin-left:auto}.hero__title{font-size:clamp(30px,4.4vw,52px);color:#fff;margin-bottom:18px;text-shadow:0 2px 12px rgba(0,0,0,.3);text-align:right}</style>
 
   <!-- Structured data: LocalBusiness -->
   <script type="application/ld+json">
@@ -224,7 +225,7 @@
     <!-- ================= HERO ================= -->
     <section class="hero">
       <div class="hero__bg">
-        <img src="assets/img/hero.webp" alt="Модульный торговый павильон Модуль ДНР" loading="eager"
+        <img src="assets/img/hero.webp" alt="Модульный торговый павильон Модуль ДНР" loading="eager" decoding="async"
              srcset="assets/img/hero-768.webp 768w, assets/img/hero-1280.webp 1280w, assets/img/hero.webp 1920w"
              sizes="100vw" width="1280" height="960" />
       </div>
@@ -311,43 +312,43 @@
         <noscript>
           <div class="catalog-grid">
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/coffee.webp" alt="Кофейня — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/coffee.webp" alt="Кофейня — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Кофейня</h3><div class="card__dims">1,8 × 1,6 × 2,7 м</div><div class="card__price-row"><span class="card__price">220 000 ₽</span><span class="card__area">2,9 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/tp.webp" alt="Торговый павильон — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/tp.webp" alt="Торговый павильон — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Торговый павильон (Т.П.)</h3><div class="card__dims">4 × 2,5 × 2,7 м</div><div class="card__price-row"><span class="card__price">350 000 ₽</span><span class="card__area">10 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m6-25.webp" alt="Модуль 6 × 2,5 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m6-25.webp" alt="Модуль 6 × 2,5 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 6 × 2,5</h3><div class="card__dims">6 × 2,5 × 2,7 м</div><div class="card__price-row"><span class="card__price">450 000 ₽</span><span class="card__area">15 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m6-3.webp" alt="Модуль 6 × 3 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m6-3.webp" alt="Модуль 6 × 3 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 6 × 3</h3><div class="card__dims">6 × 3 × 2,7 м</div><div class="card__price-row"><span class="card__price">550 000 ₽</span><span class="card__area">18 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m7-3.webp" alt="Модуль 7 × 3 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m7-3.webp" alt="Модуль 7 × 3 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 7 × 3</h3><div class="card__dims">7 × 3 × 2,7 м</div><div class="card__price-row"><span class="card__price">650 000 ₽</span><span class="card__area">21 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m8-3.webp" alt="Модуль 8 × 3 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m8-3.webp" alt="Модуль 8 × 3 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 8 × 3</h3><div class="card__dims">8 × 3 × 2,7 м</div><div class="card__price-row"><span class="card__price">700 000 ₽</span><span class="card__area">24 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m10-3.webp" alt="Модуль 10 × 3 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m10-3.webp" alt="Модуль 10 × 3 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 10 × 3</h3><div class="card__dims">10 × 3 × 2,7 м</div><div class="card__price-row"><span class="card__price">1 100 000 ₽</span><span class="card__area">30 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/m6-5.webp" alt="Модуль 6 × 5 — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/m6-5.webp" alt="Модуль 6 × 5 — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Модуль 6 × 5</h3><div class="card__dims">6 × 5 × 2,7 м</div><div class="card__price-row"><span class="card__price">1 100 000 ₽</span><span class="card__area">30 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/lux.webp" alt="Вагон-бытовка Люкс — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/lux.webp" alt="Вагон-бытовка Люкс — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Вагон-бытовка «Люкс»</h3><div class="card__dims">6 × 2,5 × 2,7 м</div><div class="card__price-row"><span class="card__price">270 000 ₽</span><span class="card__area">15 м²</span></div></div>
             </article>
             <article class="card">
-              <div class="card__media"><img src="assets/img/catalog/dacha.webp" alt="Вагон-бытовка Дачная — модульное строительство Донецк" width="400" height="250" /></div>
+              <div class="card__media"><img src="assets/img/catalog/dacha.webp" alt="Вагон-бытовка Дачная — модульное строительство Донецк" width="400" height="250" decoding="async" /></div>
               <div class="card__body"><h3 class="card__title">Вагон-бытовка «Дачная»</h3><div class="card__dims">6 × 2,5 × 2,7 м</div><div class="card__price-row"><span class="card__price">250 000 ₽</span><span class="card__area">15 м²</span></div></div>
             </article>
           </div>
@@ -626,7 +627,8 @@
     </div>
   </div>
 
+  <noscript><link rel="stylesheet" href="styles.min.css" /></noscript>
   <script src="api.js" defer></script>
-  <script src="script.js" defer></script>
+  <script src="script.min.js" defer></script>
 </body>
 </html>

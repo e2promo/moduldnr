@@ -67,7 +67,7 @@ function renderCatalog(){
     <article class="card">
       <div class="card__media js-popup-gallery" data-product='${JSON.stringify({title:p.title,dims:p.dims,area:p.area,price:p.price})}' data-photos='${JSON.stringify(photos.map(s => s.replace(/\.(jpg|jpeg)$/i, '.webp')))}'>
         ${p.tag ? `<span class="card__tag">${p.tag}</span>` : ''}
-        <img src="${imgSrc}" alt="${p.title} — модульное строительство Донецк | Модуль ДНР" loading="lazy" width="400" height="250"
+        <img src="${imgSrc}" alt="${p.title} — модульное строительство Донецк | Модуль ДНР" loading="lazy" decoding="async" width="400" height="250"
              onerror="this.onerror=null;this.src='${fallback}';" />
         <div class="card__zoom-hint">🔍 Нажмите для просмотра</div>
       </div>
@@ -113,7 +113,7 @@ function renderGallery(){
     const imgSrc = (override && override.dataUrl) ? override.dataUrl : webp;
     return `
     <figure class="gallery__item js-photo" data-full="${webp}">
-      <img src="${imgSrc}" alt="Пример модульной конструкции Модуль ДНР — фото ${i + 1}" loading="lazy" width="300" height="300"
+      <img src="${imgSrc}" alt="Пример модульной конструкции Модуль ДНР — фото ${i + 1}" loading="lazy" decoding="async" width="300" height="300"
            onerror="this.onerror=null;this.src='${src}';" />
     </figure>
     `;
@@ -124,7 +124,7 @@ function renderGallery(){
     const src = (g && g.dataUrl) ? g.dataUrl : '';
     return `
     <figure class="gallery__item js-photo" data-full="${src}">
-      <img src="${src}" alt="Работа Модуль ДНР — фото ${i + 9}" loading="lazy" width="300" height="300" />
+      <img src="${src}" alt="Работа Модуль ДНР — фото ${i + 9}" loading="lazy" decoding="async" width="300" height="300" />
     </figure>
     `;
   }).join('');
@@ -249,7 +249,7 @@ const popupGallery = {
   renderThumbs(){
     this.thumbs.innerHTML = this.list.map((src, i) => `
       <div class="popup-gallery__thumb ${i === 0 ? 'is-active' : ''}" data-idx="${i}">
-        <img src="${src}" alt="Фото ${i + 1}" loading="lazy" />
+        <img src="${src}" alt="Фото ${i + 1}" loading="lazy" decoding="async" />
       </div>
     `).join('');
   },
