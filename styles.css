@@ -302,7 +302,7 @@ h1,h2,h3,h4{ font-family:var(--ff-head); font-weight:700; line-height:1.1; lette
 
 /* ================= МОБИЛЬНАЯ ФИКС-ПАНЕЛЬ ================= */
 .mobile-bar{
-  position:fixed; left:0; right:0; bottom:0; z-index:90;
+  position:fixed; left:0; right:0; bottom:0; z-index:310;
   display:none !important; grid-template-columns:repeat(3,1fr); gap:0; background:var(--line);
   box-shadow:0 -6px 20px rgba(0,0,0,.15);
   width:100vw; max-width:100vw;
@@ -465,6 +465,6 @@ select:focus-visible, textarea:focus-visible{
 .cookie-banner__link:hover{ text-decoration:none; }
 .cookie-banner .btn{ flex-shrink:0; white-space:nowrap; }
 @media (max-width:720px){
-  .cookie-banner{ flex-direction:column; gap:10px; padding:16px; }
+  .cookie-banner{ bottom:56px; flex-direction:column; gap:10px; padding:16px; }
   .cookie-banner__text{ font-size:13px; }
 }
