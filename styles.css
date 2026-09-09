@@ -420,6 +420,7 @@ h1,h2,h3,h4{ font-family:var(--ff-head); font-weight:700; line-height:1.1; lette
   .nav__link{ padding:16px 8px; border-bottom:1px solid rgba(255,255,255,.08); font-size:17px; }
   .burger{ display:flex; margin-left:auto; }
   .header__actions{ display:none; }
+  .header__phone{ display:none !important; }
   .produce-grid, .why-grid, .catalog-grid, .steps{ grid-template-columns:1fr; }
   .gallery{ grid-template-columns:repeat(2,1fr); }
   .section{ padding:52px 0; }
