@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://moduldnr.ru/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/hero-1280.webp</image:loc>
+      <image:title>Модульный торговый павильон Модуль ДНР</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/coffee.webp</image:loc>
+      <image:title>Модульная кофейня 1,8 × 1,6 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m4-2.5-2.7.webp</image:loc>
+      <image:title>Модуль 4 × 2,5 × 2,7 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/tp.webp</image:loc>
+      <image:title>Торговый павильон 4 × 2,5 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m6-25.webp</image:loc>
+      <image:title>Модуль 6 × 2,5 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m6-3.webp</image:loc>
+      <image:title>Модуль 6 × 3 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m6-3-3.webp</image:loc>
+      <image:title>Модуль 6 × 3 × 3 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m7-3.webp</image:loc>
+      <image:title>Модуль 7 × 3 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m8-3.webp</image:loc>
+      <image:title>Модуль 8 × 3 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m10-3.webp</image:loc>
+      <image:title>Модуль 10 × 3 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/m6-5.webp</image:loc>
+      <image:title>Модуль 6 × 5 м</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/lux.webp</image:loc>
+      <image:title>Вагон-бытовка Люкс</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://moduldnr.ru/assets/img/catalog/dacha.webp</image:loc>
+      <image:title>Вагон-бытовка Дачная</image:title>
+    </image:image>
+  </url>
+</urlset>
